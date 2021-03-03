@@ -16,46 +16,6 @@ class MainViewModel : ViewModel() {
     private val networkCall = NetworkCallImpl()
 
 
-
-
-    // by suspend and callback
-    // tested -> crash if there is no internet so use try catch to handle errors
-    suspend fun suspendResponseCallback() {
-        networkCall.suspendResponseCallback(object : NRCallback<DummyResponse> {
-            override fun onSuccess(data: DummyResponse?, callInfo: CallInfo?) {
-                Log.d("response", "suspendResponseCallback $data")
-            }
-
-            override fun onFailure(th: Throwable, callInfo: CallInfo?) {
-                Log.d("response", "suspendResponseCallback failed")
-            }
-
-        })
-    }
-
-    // suspend by variable livedata
-    // tested -> crash if there is no internet so use try catch to handle errors
-    val suspendResponse = liveData(Dispatchers.IO) {
-        val retrivedTodo = networkCall.suspendResponse()
-
-        emit(retrivedTodo)
-    }
-
-    // suspend by function livedata
-    // tested -> crash if there is no internet so use try catch to handle errors
-    fun suspendResponseFun() :LiveData<DummyResponse> =liveData(Dispatchers.IO) {
-        val response = networkCall.suspendResponse()
-        if (response.isSuccessful){
-            emit(response.body()!!)
-        }
-
-//        if (response.isSuccessful) {
-//            emit(response.body())
-//        } else {
-//            emit(null)
-//        }
-    }
-
     fun perfectWay() = liveData(Dispatchers.IO){
 
         emit(Resource.loading(data = null))
@@ -67,43 +27,6 @@ class MainViewModel : ViewModel() {
 
 
     }
-
-
-//        >>>>>>>>>>>>>>>>  just a kotlin coroutine IO thread <<<<<<<<<<<<<<<<<<<<
-//    suspend fun getDummyData() =
-//        // Dispatchers.Main
-//        withContext(Dispatchers.IO) {
-//
-//        }
-
-
-    // kotlin coroutine without callback and livedata
-//    fun getDummyData(): LiveData<DummyResponse?> =
-//        liveData(Dispatchers.IO) {
-//            val response = networkCall.dummyDataWithSuspendWithoutCallback()
-//
-//            if (response.isSuccessful) {
-//                emit(response.body())
-//            } else {
-//                emit(null)
-//            }
-//        }
-
-    // kotlin coroutine without callback and livedata
-//    fun getEither(): LiveData<Either<String, DummyResponse>> =
-//        liveData(Dispatchers.IO) {
-//            val response = networkCall.either()
-//
-//            val result: Either<String, DummyResponse> =  response
-//
-//            when (this) {
-//                is Either.Right<*> ->  Log.d("eitherData", "right $result")
-//                is Either.Left<*> ->  Log.d("eitherData", response.isRight.toString())
-//            }
-//
-//            Log.d("eitherData", response.isRight.toString())
-//            emit(response)
-//        }
 
 
 }
